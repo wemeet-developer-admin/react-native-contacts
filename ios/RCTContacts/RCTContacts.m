@@ -180,7 +180,8 @@ RCT_EXPORT_METHOD(getAllWithoutPhotos:(RCTResponseSenderBlock) callback)
                                        CNContactJobTitleKey,
                                        CNContactImageDataAvailableKey,
                                        CNContactUrlAddressesKey,
-                                       CNContactBirthdayKey
+                                       CNContactBirthdayKey,
+                                       [CNContactFormatter descriptorForRequiredKeysForStyle:CNContactFormatterStyleFullName]
                                        ]];
 
     if(withThumbnails) {
@@ -200,11 +201,13 @@ RCT_EXPORT_METHOD(getAllWithoutPhotos:(RCTResponseSenderBlock) callback)
                       withThumbnails:(BOOL)withThumbnails
 {
     NSMutableDictionary* output = [NSMutableDictionary dictionary];
+    CNContactFormatter *formatter = [[CNContactFormatter alloc] init];
 
     NSString *recordID = person.identifier;
     NSString *givenName = person.givenName;
     NSString *familyName = person.familyName;
     NSString *middleName = person.middleName;
+    NSString *displayName = [formatter stringFromContact:person];
     NSString *company = person.organizationName;
     NSString *jobTitle = person.jobTitle;
     NSDateComponents *birthday = person.birthday;
@@ -221,6 +224,10 @@ RCT_EXPORT_METHOD(getAllWithoutPhotos:(RCTResponseSenderBlock) callback)
 
     if(middleName){
         [output setObject: (middleName) ? middleName : @"" forKey:@"middleName"];
+    }
+
+    if(displayName){
+        [output setObject: (displayName) ? displayName : @"" forKey:@"displayName"];
     }
 
     if(company){
